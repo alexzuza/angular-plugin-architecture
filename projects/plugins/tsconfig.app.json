@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/plugins",
+    "types": []
+  },
+  "files": [
+    "./src/main.ts"
+  ]
+}
