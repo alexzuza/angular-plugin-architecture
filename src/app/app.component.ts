@@ -26,11 +26,11 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const ssrEnable = this.transferState.get(SSR_ENABLED, false);
+    const ssrEnabled = this.transferState.get(SSR_ENABLED, false);
     if (isPlatformServer(this.platformId)) {
       this.transferState.set(SSR_ENABLED, true);
     }
-    if (!ssrEnable) {
+    if (!ssrEnabled) {
       this.loadPlugin('plugin1');
     }
   }

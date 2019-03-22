@@ -5,4 +5,5 @@ import { Component } from '@angular/core';
   templateUrl: './plugin1.component.html'
 })
 export class Plugin1Component {
+  x = false;
 }

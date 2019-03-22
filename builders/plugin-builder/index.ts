@@ -1,9 +1,13 @@
-import { BrowserBuilder, NormalizedBrowserBuilderSchema } from '@angular-devkit/build-angular';
+import {
+  BrowserBuilder,
+  NormalizedBrowserBuilderSchema
+} from '@angular-devkit/build-angular';
 import { Path, virtualFs } from '@angular-devkit/core';
 import * as fs from 'fs';
 import { Observable } from 'rxjs';
 
 import { BuilderConfiguration, BuildEvent } from '@angular-devkit/architect';
+import { tap } from 'rxjs/operators';
 
 interface PluginBuilderSchema extends NormalizedBrowserBuilderSchema {
   /**
@@ -15,27 +19,40 @@ interface PluginBuilderSchema extends NormalizedBrowserBuilderSchema {
    * A name of compiled bundle
    */
   pluginName: string;
+
+  /**
+   * A comma-delimited list of shared lib names used by current plugin
+   */
+  sharedLibs: string;
 }
 export default class LazyBuilder extends BrowserBuilder {
-
   private options: PluginBuilderSchema;
+
+  private entryPointPath: string;
+
+  patchEntryPoint(contents: string) {
+    fs.writeFileSync(this.entryPointPath, contents);
+  }
 
   buildWebpackConfig(
     root: Path,
     projectRoot: Path,
     host: virtualFs.Host<fs.Stats>,
-    options: PluginBuilderSchema,
+    options: PluginBuilderSchema
   ) {
+    const { pluginName, sharedLibs } = this.options;
+
     if (!this.options.modulePath) {
       throw Error('Please define modulePath!');
     }
 
-    if (!this.options.pluginName) {
+    if (!pluginName) {
       throw Error('Please provide pluginName!');
     }
 
     const config = super.buildWebpackConfig(root, projectRoot, host, options);
 
+    // Make sure we are producing a single bundle
     delete config.entry.polyfills;
     delete config.optimization.runtimeChunk;
     delete config.optimization.splitChunks;
@@ -44,29 +61,65 @@ export default class LazyBuilder extends BrowserBuilder {
     config.externals = {
       rxjs: 'rxjs',
       '@angular/core': 'ng.core',
-      '@angular/common': 'ng.common',
+      '@angular/common': 'ng.common'
       // put here other common dependencies
     };
 
-    const [modulePath, moduleName] = this.options.modulePath.split('#');
-    fs.writeFileSync(config.entry.main[0], `import * as ngModule from '${modulePath}';
-import { ${moduleName}NgFactory } from '${modulePath}.ngfactory';
-export default ${moduleName}NgFactory;
-`);
+    if (sharedLibs) {
+      config.externals = [config.externals];
+      const sharedLibsArr = sharedLibs.split(',');
+      sharedLibsArr.forEach(sharedLibName => {
+        const factoryRegexp = new RegExp(`${sharedLibName}.ngfactory$`);
+        config.externals[0][sharedLibName] = sharedLibName; // define external for code
+        config.externals.push((context, request, callback) => {
+          if (factoryRegexp.test(request)) {
+            return callback(null, sharedLibName); // define external for factory
+          }
+          callback();
+        });
+      });
+    }
 
-    config.output.library = 'ngPlugin';
+    // preserve path to entry point
+    // so that we can clear use it within `run` method to clear that file
+    this.entryPointPath = config.entry.main[0];
+
+    const [modulePath, moduleName] = this.options.modulePath.split('#');
+
+    const factoryPath = `${
+      modulePath.includes('.') ? modulePath : `${modulePath}/${modulePath}`
+    }.ngfactory`;
+
+    const entryPointContents = `
+      import * as ngModule from '${modulePath}';
+      import { ${moduleName}NgFactory } from '${factoryPath}';
+       export * from '${modulePath}';
+       export * from '${factoryPath}';
+       export default ${moduleName}NgFactory;
+    `;
+    this.patchEntryPoint(entryPointContents);
+
+    config.output.filename = `${pluginName}.js`;
+    config.output.library = pluginName;
     config.output.libraryTarget = 'umd';
+    // workaround to support bundle on nodejs
     config.output.globalObject = `(typeof self !== 'undefined' ? self : this)`;
-    config.output.filename = `${this.options.pluginName}.js`;
 
     return config;
   }
 
-  run(builderConfig: BuilderConfiguration<PluginBuilderSchema>): Observable<BuildEvent> {
+  run(
+    builderConfig: BuilderConfiguration<PluginBuilderSchema>
+  ): Observable<BuildEvent> {
     this.options = builderConfig.options;
+    // I don't want to write it in my scripts every time so I keep it here
     builderConfig.options.deleteOutputPath = false;
 
-    return super.run(builderConfig);
+    return super.run(builderConfig).pipe(
+      tap(() => {
+        // clear entry point so our main.ts is always empty
+        this.patchEntryPoint('');
+      })
+    );
   }
 }
-

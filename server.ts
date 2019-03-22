@@ -24,12 +24,19 @@ declare let __non_webpack_require__: typeof require;
 global['require'] = __non_webpack_require__;
 
 // Our Universal express-engine (found @ https://github.com/angular/universal/tree/master/modules/express-engine)
-app.engine('html', ngExpressEngine({
-  bootstrap: AppServerModuleNgFactory,
-  providers: [
-    provideModuleMap(LAZY_MODULE_MAP)
-  ]
-}));
+app.engine('html', (_, options, callback) => {
+  const protocol = options.req.protocol;
+  const host = options.req.get('host');
+
+  const engine = ngExpressEngine({
+    bootstrap: AppServerModuleNgFactory,
+    providers: [
+      provideModuleMap(LAZY_MODULE_MAP),
+      { provide: 'APP_BASE_URL', useFactory: () => `${protocol}://${host}`, deps: [] },
+    ]
+  });
+  engine(_, options, callback);
+});
 
 app.set('view engine', 'html');
 app.set('views', DIST_FOLDER);

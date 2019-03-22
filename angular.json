@@ -168,6 +168,41 @@
           }
         }
       }
+    },
+    "shared": {
+      "root": "projects/shared",
+      "sourceRoot": "projects/shared/src",
+      "projectType": "library",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/shared/tsconfig.lib.json",
+            "project": "projects/shared/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/shared/src/test.ts",
+            "tsConfig": "projects/shared/tsconfig.spec.json",
+            "karmaConfig": "projects/shared/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/shared/tsconfig.lib.json",
+              "projects/shared/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "angular-plugin-architecture"
