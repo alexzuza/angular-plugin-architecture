@@ -63,7 +63,8 @@ export default class LazyBuilder extends BrowserBuilder {
       '@angular/core': 'ng.core',
       '@angular/common': 'ng.common',
       '@angular/forms': 'ng.forms',
-      '@angular/router': 'ng.router'
+      '@angular/router': 'ng.router',
+      tslib: 'tslib'
       // put here other common dependencies
     };
 
