@@ -1,0 +1,34 @@
+:host {
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.plugins {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px -10px;
+
+  ::ng-deep {
+    > * {
+      width: calc((100% - 80px)/3);
+      margin: 0 10px 20px 10px;
+      padding: 20px;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 2px 12px 0 #dfe3eb;
+      box-sizing: border-box;
+    }
+  }
+}
+
+
+button {
+  border: none;
+  background: #fff;
+  line-height: 40px;
+  padding: 0 15px;
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px 0 #dfe3eb;
+}

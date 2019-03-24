@@ -22,15 +22,18 @@ export class ClientPluginLoaderService extends PluginLoaderService {
     }
 
     const depsPromises = (config[pluginName].deps || []).map(dep => {
-      window['System']
+      return window['System']
         .import(config[dep].path)
-        .then(m => window['define'](dep, [], () => m.default));
+        .then(m => {
+          window['define'](dep, [], () => m.default);
+        });
     });
 
-    return Promise.all(depsPromises).then(() =>
-      window['System']
-        .import(config[pluginName].path)
-        .then(module => module.default.default)
+    return Promise.all(depsPromises).then(() => {
+        return window['System']
+          .import(config[pluginName].path)
+          .then(module => module.default.default);
+      }
     );
   }
 }

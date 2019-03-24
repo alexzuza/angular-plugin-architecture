@@ -1,38 +1,27 @@
 import {
   Component,
-  Inject,
   Injector,
   OnInit,
-  PLATFORM_ID,
+  ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import { TransferState, makeStateKey } from '@angular/platform-browser';
 import { PluginLoaderService } from './services/plugin-loader/plugin-loader.service';
-import { isPlatformServer } from '@angular/common';
-
-const SSR_ENABLED = makeStateKey<boolean>('SSR_ENABLED');
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  @ViewChild('targetRef', { read: ViewContainerRef }) vcRef: ViewContainerRef;
+
   constructor(
-    private vcRef: ViewContainerRef,
     private injector: Injector,
-    private pluginLoader: PluginLoaderService,
-    @Inject(PLATFORM_ID) private readonly platformId: {},
-    private transferState: TransferState
+    private pluginLoader: PluginLoaderService
   ) {}
 
   ngOnInit() {
-    const ssrEnabled = this.transferState.get(SSR_ENABLED, false);
-    if (isPlatformServer(this.platformId)) {
-      this.transferState.set(SSR_ENABLED, true);
-    }
-    if (!ssrEnabled) {
-      this.loadPlugin('plugin1');
-    }
+    this.loadPlugin('plugin1');
   }
 
   loadPlugin(pluginName: string) {

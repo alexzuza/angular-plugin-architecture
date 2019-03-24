@@ -61,7 +61,9 @@ export default class LazyBuilder extends BrowserBuilder {
     config.externals = {
       rxjs: 'rxjs',
       '@angular/core': 'ng.core',
-      '@angular/common': 'ng.common'
+      '@angular/common': 'ng.common',
+      '@angular/forms': 'ng.forms',
+      '@angular/router': 'ng.router'
       // put here other common dependencies
     };
 
@@ -80,6 +82,13 @@ export default class LazyBuilder extends BrowserBuilder {
       });
     }
 
+    const ngCompilerPluginInstance = config.plugins.find(
+      x => x.constructor && x.constructor.name === 'AngularCompilerPlugin'
+    );
+    if (ngCompilerPluginInstance) {
+      ngCompilerPluginInstance._entryModule = this.options.modulePath;
+    }
+
     // preserve path to entry point
     // so that we can clear use it within `run` method to clear that file
     this.entryPointPath = config.entry.main[0];
@@ -89,12 +98,10 @@ export default class LazyBuilder extends BrowserBuilder {
     const factoryPath = `${
       modulePath.includes('.') ? modulePath : `${modulePath}/${modulePath}`
     }.ngfactory`;
-
     const entryPointContents = `
-      import * as ngModule from '${modulePath}';
-      import { ${moduleName}NgFactory } from '${factoryPath}';
        export * from '${modulePath}';
        export * from '${factoryPath}';
+       import { ${moduleName}NgFactory } from '${factoryPath}';
        export default ${moduleName}NgFactory;
     `;
     this.patchEntryPoint(entryPointContents);
