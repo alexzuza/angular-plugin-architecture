@@ -4,6 +4,13 @@
   margin: 0 auto;
 }
 
+@media (max-width: 1200px) {
+  :host  {
+    max-width: none;
+    margin: 0 25px;
+  }
+}
+
 .plugins {
   display: flex;
   flex-wrap: wrap;
@@ -11,7 +18,7 @@
 
   ::ng-deep {
     > * {
-      width: calc((100% - 80px)/3);
+      width: calc((100% - 80px)/2);
       margin: 0 10px 20px 10px;
       padding: 20px;
       border-radius: 6px;
