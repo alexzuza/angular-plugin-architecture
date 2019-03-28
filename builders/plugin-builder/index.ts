@@ -25,7 +25,7 @@ interface PluginBuilderSchema extends NormalizedBrowserBuilderSchema {
    */
   sharedLibs: string;
 }
-export default class LazyBuilder extends BrowserBuilder {
+export default class PluginBuilder extends BrowserBuilder {
   private options: PluginBuilderSchema;
 
   private entryPointPath: string;
