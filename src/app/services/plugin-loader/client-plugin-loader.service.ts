@@ -29,6 +29,13 @@ export class ClientPluginLoaderService extends PluginLoaderService {
       });
     });
 
+    if (typeof PLUGIN_EXTERNALS_MAP.shared === 'string') {
+      depsPromises.push(SystemJs.import('/assets/plugins/shared.js').then(m => {
+        PLUGIN_EXTERNALS_MAP.shared = m.default;
+        window['define']('shared', [], () => m.default);
+      }));
+    }
+
     return Promise.all(depsPromises).then(() => {
       return SystemJs.import(config[pluginName].path).then(
         module => module.default.default

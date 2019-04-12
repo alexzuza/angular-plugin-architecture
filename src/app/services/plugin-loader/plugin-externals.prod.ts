@@ -4,6 +4,7 @@ import * as forms from '@angular/forms';
 import * as router from '@angular/router';
 import * as rxjs from 'rxjs';
 import * as tslib from 'tslib';
+import * as shared from 'shared';
 
 export const PLUGIN_EXTERNALS_MAP = {
   'ng.core': core,
@@ -12,6 +13,7 @@ export const PLUGIN_EXTERNALS_MAP = {
   'ng.router': router,
   rxjs,
   tslib,
-  shared: '/assets/plugins/shared.js'
+  shared: { ...shared, ...require('shared/shared.ngfactory') }
 };
 
+declare let require: any;

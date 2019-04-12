@@ -38,6 +38,10 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/app/services/plugin-loader/plugin-externals.ts",
+                  "with": "src/app/services/plugin-loader/plugin-externals.prod.ts"
                 }
               ],
               "optimization": true,
@@ -118,6 +122,10 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/app/services/plugin-loader/plugin-externals.ts",
+                  "with": "src/app/services/plugin-loader/plugin-externals.prod.ts"
                 }
               ]
             }

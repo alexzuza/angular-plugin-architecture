@@ -17,7 +17,7 @@ export class ServerPluginLoaderService extends PluginLoaderService {
     const originalRequire = Module.prototype.require;
     Module.prototype.require = function(name) {
       if (that.configProvider.config[name]) {
-        return global['require'](
+        return PLUGIN_EXTERNALS_MAP[name] || global['require'](
           `./browser${that.configProvider.config[name].path}`
         );
       }

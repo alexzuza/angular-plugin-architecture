@@ -10,13 +10,15 @@ import { PluginLoaderService } from './services/plugin-loader/plugin-loader.serv
 import { ClientPluginLoaderService } from './services/plugin-loader/client-plugin-loader.service';
 import { PluginsConfigProvider } from './services/plugins-config.provider';
 import { TransferStateService } from './services/transfer-state.service';
+import { SharedModule } from 'shared';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     HttpClientModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
-    BrowserTransferStateModule
+    BrowserTransferStateModule,
+    SharedModule
   ],
   providers: [
     { provide: PluginLoaderService, useClass: ClientPluginLoaderService },
