@@ -35,3 +35,7 @@ Server-side
 npm run build:ssr
 npm run serve:ssr
 ```
+
+## License
+
+MIT
