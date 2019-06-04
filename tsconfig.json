@@ -24,7 +24,8 @@
       ],
       "shared/*": [
         "dist/shared/*"
-      ]
+      ],
+      "rxjs": ["./node_modules/rxjs"]
     }
   }
 }

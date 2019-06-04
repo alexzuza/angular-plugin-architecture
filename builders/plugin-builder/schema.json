@@ -73,6 +73,7 @@
     },
     "optimization": {
       "description": "Enables optimization of the build output.",
+      "x-user-analytics": 16,
       "oneOf": [
         {
           "type": "object",
@@ -115,6 +116,7 @@
     "aot": {
       "type": "boolean",
       "description": "Build using Ahead of Time compilation.",
+      "x-user-analytics": 13,
       "default": false
     },
     "sourceMap": {
@@ -221,7 +223,12 @@
       "type": "string",
       "description": "Define the output filename cache-busting hashing mode.",
       "default": "none",
-      "enum": ["none", "all", "media", "bundles"]
+      "enum": [
+        "none",
+        "all",
+        "media",
+        "bundles"
+      ]
     },
     "poll": {
       "type": "number",
@@ -310,22 +317,32 @@
     "profile": {
       "type": "boolean",
       "description": "Output profile events for Chrome profiler.",
-      "default": false
+      "default": false,
+      "x-deprecated": "Use \"NG_BUILD_PROFILING\" environment variable instead."
     },
     "es5BrowserSupport": {
       "description": "Enables conditionally loaded ES2015 polyfills.",
       "type": "boolean",
-      "default": false
+      "x-deprecated": "This will be determined from the list of supported browsers specified in the 'browserslist' file."
     },
     "rebaseRootRelativeCssUrls": {
       "description": "Change root relative URLs in stylesheets to include base HREF and deploy URL. Use only for compatibility and transition. The behavior of this option is non-standard and will be removed in the next major release.",
       "type": "boolean",
       "default": false,
       "x-deprecated": true
+    },
+    "webWorkerTsConfig": {
+      "type": "string",
+      "description": "TypeScript configuration for Web Worker modules."
     }
   },
   "additionalProperties": false,
-  "required": ["outputPath", "index", "main", "tsConfig"],
+  "required": [
+    "outputPath",
+    "index",
+    "main",
+    "tsConfig"
+  ],
   "definitions": {
     "assetPattern": {
       "oneOf": [
@@ -353,7 +370,11 @@
             }
           },
           "additionalProperties": false,
-          "required": ["glob", "input", "output"]
+          "required": [
+            "glob",
+            "input",
+            "output"
+          ]
         },
         {
           "type": "string"
@@ -373,7 +394,10 @@
             }
           },
           "additionalProperties": false,
-          "required": ["src", "replaceWith"]
+          "required": [
+            "src",
+            "replaceWith"
+          ]
         },
         {
           "type": "object",
@@ -386,7 +410,10 @@
             }
           },
           "additionalProperties": false,
-          "required": ["replace", "with"]
+          "required": [
+            "replace",
+            "with"
+          ]
         }
       ]
     },
@@ -410,7 +437,9 @@
             }
           },
           "additionalProperties": false,
-          "required": ["input"]
+          "required": [
+            "input"
+          ]
         },
         {
           "type": "string",
@@ -424,7 +453,14 @@
         "type": {
           "type": "string",
           "description": "The type of budget.",
-          "enum": ["all", "allScript", "any", "anyScript", "bundle", "initial"]
+          "enum": [
+            "all",
+            "allScript",
+            "any",
+            "anyScript",
+            "bundle",
+            "initial"
+          ]
         },
         "name": {
           "type": "string",
@@ -460,7 +496,9 @@
         }
       },
       "additionalProperties": false,
-      "required": ["type"]
+      "required": [
+        "type"
+      ]
     }
   }
 }
