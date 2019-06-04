@@ -31,7 +31,6 @@ function buildPlugin(options: Options,
                      transforms: {
                          webpackConfiguration?: ExecutionTransformer<webpack.Configuration>,
                      } = {}): Observable<BrowserBuilderOutput> {
-  debugger
   options.deleteOutputPath = false;
 
   validateOptions(options);
