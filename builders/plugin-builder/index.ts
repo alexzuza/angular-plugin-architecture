@@ -27,10 +27,10 @@ interface Options extends JsonObject {
 let entryPointPath;
 
 function buildPlugin(options: Options,
-                     context: BuilderContext,
-                     transforms: {
-                         webpackConfiguration?: ExecutionTransformer<webpack.Configuration>,
-                     } = {}): Observable<BrowserBuilderOutput> {
+  context: BuilderContext,
+  transforms: {
+    webpackConfiguration?: ExecutionTransformer<webpack.Configuration>,
+  } = {}): Observable<BrowserBuilderOutput> {
   options.deleteOutputPath = false;
 
   validateOptions(options);
@@ -113,15 +113,14 @@ function patchWebpackConfig(config: webpack.Configuration, options: Options) {
 
   const [modulePath, moduleName] = options.modulePath.split('#');
 
-  const factoryPath = `${
-    modulePath.includes('.') ? modulePath : `${modulePath}/${modulePath}`
-    }.ngfactory`;
+  // const factoryPath = `${
+  //   modulePath.includes('.') ? modulePath : `${modulePath}/${modulePath}`
+  //   }.ngfactory`;
   const entryPointContents = `
-       export * from '${modulePath}';
-       export * from '${factoryPath}';
-       import { ${moduleName}NgFactory } from '${factoryPath}';
-       export default ${moduleName}NgFactory;
-    `;
+    export * from '${modulePath}';
+    import { ${moduleName} } from '${modulePath}';
+    export default ${moduleName};
+  `;
   patchEntryPoint(entryPointContents);
 
   config.output.filename = `${pluginName}.js`;

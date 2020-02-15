@@ -1,9 +1,9 @@
-import { Injectable, NgModuleFactory } from '@angular/core';
+import { Injectable, Type } from '@angular/core';
 import { PluginLoaderService } from './plugin-loader.service';
 import { PLUGIN_EXTERNALS_MAP } from './plugin-externals';
 import { PluginsConfigProvider } from '../plugins-config.provider';
 
-const SystemJs = window.System;
+const SystemJs = (window as any).System;
 
 @Injectable()
 export class ClientPluginLoaderService extends PluginLoaderService {
@@ -13,11 +13,15 @@ export class ClientPluginLoaderService extends PluginLoaderService {
 
   provideExternals() {
     Object.keys(PLUGIN_EXTERNALS_MAP).forEach(externalKey =>
-      window.define(externalKey, [], () => PLUGIN_EXTERNALS_MAP[externalKey])
+      (window as any).define(
+        externalKey,
+        [],
+        () => PLUGIN_EXTERNALS_MAP[externalKey]
+      )
     );
   }
 
-  load<T>(pluginName): Promise<NgModuleFactory<T>> {
+  load<T>(pluginName): Promise<Type<T>> {
     const { config } = this.configProvider;
     if (!config[pluginName]) {
       throw Error(`Can't find appropriate plugin`);
