@@ -3,7 +3,8 @@ import {
   Injector,
   OnInit,
   ViewChild,
-  ViewContainerRef
+  ViewContainerRef,
+  ComponentFactoryResolver
 } from '@angular/core';
 import { PluginLoaderService } from './services/plugin-loader/plugin-loader.service';
 
@@ -13,11 +14,13 @@ import { PluginLoaderService } from './services/plugin-loader/plugin-loader.serv
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  @ViewChild('targetRef', { read: ViewContainerRef }) vcRef: ViewContainerRef;
+  @ViewChild('targetRef', { read: ViewContainerRef, static: true })
+  vcRef: ViewContainerRef;
 
   constructor(
     private injector: Injector,
-    private pluginLoader: PluginLoaderService
+    private pluginLoader: PluginLoaderService,
+    private cfr: ComponentFactoryResolver
   ) {}
 
   ngOnInit() {
@@ -25,13 +28,10 @@ export class AppComponent implements OnInit {
   }
 
   loadPlugin(pluginName: string) {
-    this.pluginLoader.load(pluginName).then(moduleFactory => {
-      const moduleRef = moduleFactory.create(this.injector);
-      const entryComponent = (moduleFactory.moduleType as any).entry;
-      const compFactory = moduleRef.componentFactoryResolver.resolveComponentFactory(
-        entryComponent
-      );
-      this.vcRef.createComponent(compFactory);
+    this.pluginLoader.load(pluginName).then((moduleType: any) => {
+      const entry = moduleType.entry;
+      const componentFactory = this.cfr.resolveComponentFactory(entry);
+      this.vcRef.createComponent(componentFactory, undefined, this.injector);
     });
   }
 }
