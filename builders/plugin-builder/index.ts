@@ -114,15 +114,22 @@ function patchWebpackConfig(config: webpack.Configuration, options: Options) {
   const [modulePath, moduleName] = options.modulePath.split('#');
 
   const factoryPath = `${
+    // modulePath.includes('.') ? modulePath : `${modulePath}/${modulePath}`
+    // }.ngfactory`;
     modulePath.includes('.') ? modulePath : `${modulePath}/${modulePath}`
-    }.ngfactory`;
-  const entryPointContents = `
-       export * from '${modulePath}';
-       export * from '${factoryPath}';
-       import { ${moduleName}NgFactory } from '${factoryPath}';
-       export default ${moduleName}NgFactory;
-    `;
-  patchEntryPoint(entryPointContents);
+    }`;
+  // const entryPointContents = `
+  //      export * from '${modulePath}';
+  //      export * from '${factoryPath}';
+  //      import { ${moduleName}NgFactory } from '${factoryPath}';
+  //      export default ${moduleName}NgFactory;
+  //   `;
+    const entryPointContents = `
+    export * from '${modulePath}';
+    import { ${moduleName} } from '${modulePath}';
+    export default ${moduleName};
+ `;
+patchEntryPoint(entryPointContents);
 
   config.output.filename = `${pluginName}.js`;
   config.output.library = pluginName;
