@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -29,8 +30,7 @@
               "node_modules/systemjs/dist/s.js",
               "node_modules/systemjs/dist/extras/named-register.js",
               "node_modules/systemjs/dist/extras/amd.js"
-            ],
-            "es5BrowserSupport": true
+            ]
           },
           "configurations": {
             "production": {
@@ -54,6 +54,10 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -109,7 +113,7 @@
           "builder": "@angular-devkit/build-angular:server",
           "options": {
             "outputPath": "dist/server",
-            "main": "src/main.server.ts",
+            "main": "server.ts",
             "tsConfig": "src/tsconfig.server.json"
           },
           "configurations": {
@@ -120,7 +124,34 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            ,              "optimization": true
+}
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "angular-plugin-architecture:build",
+            "serverTarget": "angular-plugin-architecture:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "angular-plugin-architecture:build:production",
+              "serverTarget": "angular-plugin-architecture:server:production"
             }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "angular-plugin-architecture:build:production",
+            "serverTarget": "angular-plugin-architecture:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
           }
         }
       }
@@ -142,8 +173,7 @@
             "tsConfig": "projects/plugins/tsconfig.app.json",
             "assets": [],
             "styles": [],
-            "scripts": [],
-            "es5BrowserSupport": false
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -181,7 +211,12 @@
             "tsConfig": "projects/shared/tsconfig.lib.json",
             "project": "projects/shared/ng-package.json"
           }
-        },
+        ,          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared/tsconfig.lib.prod.json"
+            }
+          }
+},
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {

@@ -1,4 +1,4 @@
-import { NgModuleFactory } from '@angular/core';
+import { NgModuleFactory, Type } from '@angular/core';
 
 export abstract class PluginLoaderService {
   protected constructor() {
@@ -7,5 +7,5 @@ export abstract class PluginLoaderService {
 
   abstract provideExternals(): void;
 
-  abstract load<T>(pluginName): Promise<NgModuleFactory<T>>;
+  abstract load<T>(pluginName): Promise<Type<T>>;
 }
