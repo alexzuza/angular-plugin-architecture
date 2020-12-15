@@ -13,7 +13,7 @@ import { PluginLoaderService } from './services/plugin-loader/plugin-loader.serv
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  @ViewChild('targetRef', { read: ViewContainerRef }) vcRef: ViewContainerRef;
+  @ViewChild('targetRef', { read: ViewContainerRef, static: true }) vcRef: ViewContainerRef;
 
   constructor(
     private injector: Injector,
